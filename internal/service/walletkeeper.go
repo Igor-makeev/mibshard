@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"mibshard/internal/repository"
-	"strconv"
 )
 
 type WalletKeeperService struct {
@@ -14,20 +13,15 @@ type WalletKeeperService struct {
 func NewWalletKeeperService(repo *repository.Repository) *WalletKeeperService {
 	return &WalletKeeperService{repo: repo}
 }
-func (wks *WalletKeeperService) CreateWallet(ctx context.Context, key string, value int) error {
-	if err := wks.repo.CreateNote(ctx, key, value); err != nil {
+func (wks *WalletKeeperService) CreateWallet(ctx context.Context, key int, value int) error {
+	if err := wks.repo.CreateWallet(ctx, key, value); err != nil {
 		return err
 	}
 	return nil
 }
-func (wks *WalletKeeperService) SetNote(ctx context.Context, key string, value int) error {
+func (wks *WalletKeeperService) ChangeWalletBalance(ctx context.Context, key int, value int) error {
 
-	oldBalanceString, err := wks.repo.GetNote(ctx, key)
-	if err != nil {
-		return err
-	}
-
-	oldBalance, err := strconv.Atoi(oldBalanceString)
+	oldBalance, err := wks.repo.GetWalletBalance(ctx, key)
 	if err != nil {
 		return err
 	}
@@ -38,7 +32,7 @@ func (wks *WalletKeeperService) SetNote(ctx context.Context, key string, value i
 		return err
 	}
 
-	if err = wks.repo.SetNote(ctx, key, newBalance); err != nil {
+	if err = wks.repo.ChangeWalletBalance(ctx, key, newBalance); err != nil {
 		return err
 	}
 	return nil

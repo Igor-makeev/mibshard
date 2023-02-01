@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -20,27 +21,36 @@ func NewRedisVault(address string) *RedisVault {
 	return &RedisVault{Client: client}
 }
 
-func (rv *RedisVault) SetNote(ctx context.Context, key string, value int) error {
-	if err := rv.Client.Set(ctx, key, value, 0).Err(); err != nil {
+func (rv *RedisVault) ChangeWalletBalance(ctx context.Context, key int, value int) error {
+
+	strKey := strconv.Itoa(key)
+
+	if err := rv.Client.Set(ctx, strKey, value, 0).Err(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (rv *RedisVault) GetNote(ctx context.Context, key string) (string, error) {
-	result, err := rv.Client.Get(ctx, key).Result()
+func (rv *RedisVault) GetWalletBalance(ctx context.Context, key int) (int, error) {
+	strKey := strconv.Itoa(key)
+	record, err := rv.Client.Get(ctx, strKey).Result()
 	if err != nil {
-		return "", err
+		return 0, err
+	}
+	result, err := strconv.Atoi(record)
+	if err != nil {
+		return 0, err
 	}
 	return result, nil
 }
-func (rv *RedisVault) CreateNote(ctx context.Context, key string, value int) error {
-	res, err := rv.Client.Exists(ctx, key).Result()
+func (rv *RedisVault) CreateWallet(ctx context.Context, key int, value int) error {
+	strKey := strconv.Itoa(key)
+	res, err := rv.Client.Exists(ctx, strKey).Result()
 	if err != nil {
 		return err
 	}
 	if res != 0 {
-		err = &IdAlreadyExistError{key}
+		err = &IdAlreadyExistError{strKey}
 		return err
 	}
 

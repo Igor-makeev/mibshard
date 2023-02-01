@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) SetWalletDataHandler(c *gin.Context) {
+func (h *Handler) ChangeWalletBalance(c *gin.Context) {
 
 	var input entities.ChangeRequest
 
@@ -15,7 +15,7 @@ func (h *Handler) SetWalletDataHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.Service.WalletKeeper.SetNote(c.Request.Context(), input.Id, input.Amount)
+	err := h.Service.WalletKeeper.ChangeWalletBalance(c.Request.Context(), input.Id, input.Amount)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
 	}

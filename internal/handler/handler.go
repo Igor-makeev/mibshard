@@ -20,7 +20,7 @@ func NewHandler(service *service.Service) *Handler {
 	api := handler.Router.Group("/api")
 	{
 
-		api.POST("/changevalue", handler.SetWalletDataHandler)
+		api.POST("/changevalue", handler.ChangeWalletBalance)
 		api.POST("/createwallet", handler.Createwallet)
 
 	}

@@ -6,8 +6,8 @@ import (
 )
 
 type WalletKeeper interface {
-	SetNote(ctx context.Context, key string, value int) error
-	CreateWallet(ctx context.Context, key string, value int) error
+	ChangeWalletBalance(ctx context.Context, key int, value int) error
+	CreateWallet(ctx context.Context, key int, value int) error
 }
 
 type Service struct {
