@@ -17,7 +17,8 @@ func (h *Handler) ChangeWalletBalance(c *gin.Context) {
 	}
 	err := h.Service.WalletKeeper.ChangeWalletBalance(c.Request.Context(), input.Id, input.Amount)
 	if err != nil {
-		c.Status(http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.Status(http.StatusAccepted)
 
@@ -34,6 +35,7 @@ func (h *Handler) Createwallet(c *gin.Context) {
 	err := h.Service.WalletKeeper.CreateWallet(c.Request.Context(), input.Id, 0)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	c.Status(http.StatusAccepted)
 

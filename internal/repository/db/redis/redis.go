@@ -53,7 +53,9 @@ func (rv *RedisVault) CreateWallet(ctx context.Context, key int, value int) erro
 		err = &IdAlreadyExistError{strKey}
 		return err
 	}
-
+	if err := rv.Client.Set(ctx, strKey, value, 0).Err(); err != nil {
+		return err
+	}
 	return nil
 }
 

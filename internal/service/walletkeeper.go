@@ -27,6 +27,7 @@ func (wks *WalletKeeperService) ChangeWalletBalance(ctx context.Context, key int
 	}
 
 	newBalance := oldBalance + value
+
 	if newBalance < 0 {
 		err = &InvalidBalanceValueError{newBalance}
 		return err
