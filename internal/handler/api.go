@@ -32,7 +32,7 @@ func (h *Handler) Createwallet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.Service.WalletKeeper.CreateWallet(c.Request.Context(), input.Id, 0)
+	err := h.Service.WalletKeeper.CreateWallet(c.Request.Context(), input.Id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

@@ -6,9 +6,10 @@ import (
 )
 
 type WalletKeeper interface {
-	CreateWallet(ctx context.Context, key int, value int) error
+	CreateWallet(ctx context.Context, key int) error
 	ChangeWalletBalance(ctx context.Context, key int, value int) error
-	GetWalletBalance(ctx context.Context, key int) (int, error)
+	GetWalletBalance(ctx context.Context, key int) (int, bool, error)
+	Close(ctx context.Context) error
 }
 type Repository struct {
 	WalletKeeper
@@ -20,4 +21,8 @@ func NewRepository(wk WalletKeeper, cfg *configs.Config) *Repository {
 		WalletKeeper: wk,
 		cfg:          cfg,
 	}
+}
+
+func (rep *Repository) Close(ctx context.Context) error {
+	return rep.WalletKeeper.Close(ctx)
 }
