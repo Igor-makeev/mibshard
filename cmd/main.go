@@ -13,12 +13,18 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		logrus.Fatalf("error loading env variables: %s", err.Error())
+	}
 	cfg := configs.NewConfig()
+
 	ctx := context.Background()
+
 	psclient, err := postgres.NewPostgresClient(cfg)
 	if err != nil {
 		logrus.Fatal(err)

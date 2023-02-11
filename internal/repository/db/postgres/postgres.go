@@ -30,7 +30,7 @@ func NewPostgresWalletKeeper(cfg *configs.Config, conn *pgx.Conn) *PostgresWalle
 func NewPostgresClient(cfg *configs.Config) (*pgx.Conn, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-	conn, err := pgx.Connect(ctx, cfg.PostgresAddres)
+	conn, err := pgx.Connect(ctx, cfg.DBAddress)
 	if err != nil {
 		logrus.Printf("Unable to connect to database: %v\n", err)
 		return nil, err
