@@ -6,8 +6,9 @@ import (
 )
 
 type WalletKeeper interface {
-	ChangeWalletBalance(ctx context.Context, key int, value int) error
-	CreateWallet(ctx context.Context, key int) error
+	PrepareTransaction(ctx context.Context, TxID string, walletID int, amount int) error
+	CommitChanges(ctx context.Context, TxID string, walletID int, valamountue int) error
+	CreateWallet(ctx context.Context, walletID int) error
 	Close(ctx context.Context) error
 }
 

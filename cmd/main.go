@@ -9,6 +9,7 @@ import (
 	postgres "mibshard/internal/repository/db/postgres"
 	"mibshard/internal/service"
 	"mibshard/server"
+
 	"os"
 	"os/signal"
 	"syscall"

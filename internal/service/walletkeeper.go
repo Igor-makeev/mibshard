@@ -8,10 +8,14 @@ import (
 
 type WalletKeeperService struct {
 	repo *repository.Repository
+	tm   *TransactionManager
 }
 
 func NewWalletKeeperService(repo *repository.Repository) *WalletKeeperService {
-	return &WalletKeeperService{repo: repo}
+	return &WalletKeeperService{
+		repo: repo,
+		tm:   NewTransactionManager(repo),
+	}
 }
 func (wks *WalletKeeperService) CreateWallet(ctx context.Context, key int) error {
 	if err := wks.repo.CreateWallet(ctx, key); err != nil {
@@ -19,27 +23,42 @@ func (wks *WalletKeeperService) CreateWallet(ctx context.Context, key int) error
 	}
 	return nil
 }
-func (wks *WalletKeeperService) ChangeWalletBalance(ctx context.Context, key int, value int) error {
+func (wks *WalletKeeperService) PrepareTransaction(ctx context.Context, TxID string, walletID int, amount int) error {
 
-	oldBalance, lock_status, err := wks.repo.GetWalletBalance(ctx, key)
+	oldBalance, lock_status, err := wks.repo.GetWalletBalance(ctx, walletID)
 	if err != nil {
 		return err
 	}
 	if lock_status {
 
-		return &WalletLockedError{key}
+		return &WalletLockedError{walletID}
 	}
-	newBalance := oldBalance + value
+	newBalance := oldBalance + amount
 
 	if newBalance < 0 {
-		err = &InvalidBalanceValueError{key}
+		err = &InvalidBalanceValueError{walletID}
 		return err
 	}
 
-	if err = wks.repo.ChangeWalletBalance(ctx, key, newBalance); err != nil {
+	tx := &Transaction{
+		txID:        TxID,
+		walletID:    walletID,
+		amount:      amount,
+		prepareFlag: true,
+	}
+	wks.tm.txLog.AddRecord(ctx, tx.txID, tx.walletID, tx.amount)
+	wks.tm.stream <- tx
+
+	return nil
+}
+
+func (wks *WalletKeeperService) CommitChanges(ctx context.Context, TxID string, walletID int, amount int) error {
+
+	if err := wks.repo.ChangeWalletBalance(ctx, walletID, amount); err != nil {
 		return err
 	}
 	return nil
+
 }
 
 type WalletLockedError struct {

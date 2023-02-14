@@ -7,20 +7,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *Handler) ChangeWalletBalance(c *gin.Context) {
+func (h *Handler) PrepareTransaction(c *gin.Context) {
 
-	var input entities.ChangeRequest
+	var input entities.PreparerRequest
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.Service.WalletKeeper.ChangeWalletBalance(c.Request.Context(), input.Id, input.Amount)
+	err := h.Service.WalletKeeper.PrepareTransaction(c.Request.Context(), input.TxID, input.WalletID, input.Amount)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	c.Status(http.StatusAccepted)
+
+}
+
+func (h *Handler) CommitChanges(c *gin.Context) {
 
 }
 
@@ -37,6 +41,7 @@ func (h *Handler) Createwallet(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.Status(http.StatusAccepted)
 
 }
