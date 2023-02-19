@@ -22,6 +22,7 @@ func NewHandler(service *service.Service) *Handler {
 
 		api.POST("/prepare", handler.PrepareTransaction)
 		api.POST("/commit", handler.CommitChanges)
+		api.POST("/mark_as_soccessful", handler.CommitChanges)
 		api.POST("/createwallet", handler.Createwallet)
 
 	}

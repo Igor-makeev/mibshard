@@ -29,7 +29,7 @@ func NewPostgresWalletKeeper(cfg *configs.Config, conn *pgxpool.Pool) *PostgresW
 func NewPostgresClient(cfg *configs.Config) (*pgxpool.Pool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()
-	conn, err := pgxpool.New(ctx, fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", cfg.Host, cfg.Port, cfg.UserName, cfg.Name, cfg.Password, cfg.SslMode))
+	conn, err := pgxpool.New(ctx, cfg.DBAddress)
 	if err != nil {
 		logrus.Printf("Unable to connect to database: %v\n", err)
 		return nil, err
