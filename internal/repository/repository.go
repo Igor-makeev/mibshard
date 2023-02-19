@@ -11,9 +11,9 @@ type PersistanceStorage interface {
 }
 
 type WalletKeeper interface {
-	CreateWallet(ctx context.Context, walletID int) error
+	CreateWallet(ctx context.Context, walletID, UserID int) error
 	ChangeWalletBalance(ctx context.Context, walletID int, amount int) error
-	GetWalletBalance(ctx context.Context, walletID int) (int, bool, error)
+	GetWalletBalance(ctx context.Context, walletID int) (int, error)
 	Close(ctx context.Context) error
 }
 

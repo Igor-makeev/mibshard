@@ -41,8 +41,8 @@ func NewPostgresClient(cfg *configs.Config) (*pgxpool.Pool, error) {
 	return conn, err
 }
 
-func (pwk *PostgresWalletKeeper) CreateWallet(ctx context.Context, key int) error {
-	if _, err := pwk.DB.Exec(ctx, "insert into wallet_keeper(id,balance,lock_status) values($1,$2,$3);", key, 0, false); err != nil {
+func (pwk *PostgresWalletKeeper) CreateWallet(ctx context.Context, walletID, userIDint int) error {
+	if _, err := pwk.DB.Exec(ctx, "insert into wallet_keeper(user_id,wallet_id,balance) values($1,$2,$3);", userIDint, walletID, 0); err != nil {
 		return err
 	}
 	return nil
@@ -54,20 +54,19 @@ func (pwk *PostgresWalletKeeper) ChangeWalletBalance(ctx context.Context, key in
 	}
 	return nil
 }
-func (pwk *PostgresWalletKeeper) GetWalletBalance(ctx context.Context, key int) (int, bool, error) {
+func (pwk *PostgresWalletKeeper) GetWalletBalance(ctx context.Context, key int) (int, error) {
 	var result struct {
-		balance     int
-		lock_status bool
+		balance int
 	}
-	if err := pwk.DB.QueryRow(ctx, "select balance, lock_status from wallet_keeper where id=$1", key).Scan(&result.balance, &result.lock_status); err != nil {
+	if err := pwk.DB.QueryRow(ctx, "select balance from wallet_keeper where id=$1", key).Scan(&result.balance); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			err = &WalletNotExistError{key}
 		}
-		return 0, false, err
+		return 0, err
 
 	}
 
-	return result.balance, result.lock_status, nil
+	return result.balance, nil
 
 }
 

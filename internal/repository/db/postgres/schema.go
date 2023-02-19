@@ -2,9 +2,10 @@ package repository
 
 const walletKeeperSchema = `
 create table if not exists wallet_keeper (
-    ID integer NOT NULL UNIQUE,
-    Balance integer,
-  Lock_Status boolean
+  user_id integer not null,  
+  wallet_id integer NOT NULL UNIQUE,
+    Balance integer
+  
 );`
 
 const transactionLogSchema = `

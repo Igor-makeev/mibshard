@@ -17,22 +17,19 @@ func NewWalletKeeperService(repo *repository.Repository) *WalletKeeperService {
 		tm:   NewTransactionManager(repo),
 	}
 }
-func (wks *WalletKeeperService) CreateWallet(ctx context.Context, key int) error {
-	if err := wks.repo.CreateWallet(ctx, key); err != nil {
+func (wks *WalletKeeperService) CreateWallet(ctx context.Context, userID, walletID int) error {
+	if err := wks.repo.CreateWallet(ctx, userID, walletID); err != nil {
 		return err
 	}
 	return nil
 }
 func (wks *WalletKeeperService) PrepareTransaction(ctx context.Context, TxID string, walletID int, amount int) error {
 
-	oldBalance, lock_status, err := wks.repo.GetWalletBalance(ctx, walletID)
+	oldBalance, err := wks.repo.GetWalletBalance(ctx, walletID)
 	if err != nil {
 		return err
 	}
-	if lock_status {
 
-		return &WalletLockedError{walletID}
-	}
 	newBalance := oldBalance + amount
 
 	if newBalance < 0 {

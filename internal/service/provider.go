@@ -19,5 +19,3 @@ func NewProvider() *Provider {
 		Client: client,
 	}
 }
-
-func (p *Provider) CommitRequest()
